@@ -15,7 +15,7 @@ class InformacionPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('aaa', style: Theme.of(context).textTheme.displayMedium),
+                Text('About', style: Theme.of(context).textTheme.displayMedium),
               ],
             ),
             Row(
@@ -30,7 +30,7 @@ class InformacionPage extends StatelessWidget {
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Text('Dart Vader'), Text('Lord of the Sith ')],
+                  children: [Text('Gael Borchardt'), Text('Dev ')],
                 ),
               ],
             ),
