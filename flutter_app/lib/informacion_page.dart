@@ -8,18 +8,26 @@ class InformacionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Información')),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text('About')],
+              children: [
+                Text('aaa', style: Theme.of(context).textTheme.displayMedium),
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(mainAxisAlignment: MainAxisAlignment.center),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Image.asset('assets/foto.jpg', width: 100, height: 100),
+                  ],
+                ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [Text('Dart Vader'), Text('Lord of the Sith ')],
