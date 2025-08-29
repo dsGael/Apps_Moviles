@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/settings_controller.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'juego_page.dart';
 import 'configuracion_page.dart';
 import 'informacion_page.dart';
 
 void main() {
+  Get.put(SettingsController());
   runApp(const MyApp());
 }
 
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
         GoRoute(path: '/juego', builder: (context, state) => const JuegoPage()),
         GoRoute(
           path: '/configuracion',
-          builder: (context, state) => const ConfiguracionPage(),
+          builder: (context, state) => ConfiguracionPage(),
         ),
         GoRoute(
           path: '/informacion',
