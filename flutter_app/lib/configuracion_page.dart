@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/settings_controller.dart';
 import 'package:get/get.dart';
 
-enum TemaJuego { base, futurista }
-
 List<String> imagenes = [
-  './assets/base/backgroung.png',
+  './assets/base/background.png',
   './assets/futurista/background.png',
 ];
 
@@ -52,32 +50,37 @@ class _ConfiguracionPageState extends State<ConfiguracionPage> {
                       _temaSeleccionado = nuevoValor;
                     });
                   },
-                  items: const <DropdownMenuItem<TemaJuego>>[
+                  items: <DropdownMenuItem<TemaJuego>>[
                     DropdownMenuItem<TemaJuego>(
                       value: TemaJuego.base,
-                      child: Text('Base'),
+                      child: Text(
+                        widget.settingsController.getTemaNombre(
+                          TemaJuego.base.index,
+                        ),
+                      ),
                     ),
                     DropdownMenuItem<TemaJuego>(
                       value: TemaJuego.futurista,
-                      child: Text('Futurista'),
+                      child: Text(
+                        widget.settingsController.getTemaNombre(
+                          TemaJuego.futurista.index,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
+            Row(children: [widget.settingsController.showTemaBackground(200)]),
             Row(
               children: [
-                Image.asset(imagenes[_temaSeleccionado!.index], width: 500),
-              ],
-            ),
-            Row(
-              children: [
-                SizedBox(height: 20),
+                SizedBox(height: 25, width: 20),
                 ElevatedButton(
                   onPressed: () {
                     widget.settingsController.actualizaTema(
                       _temaSeleccionado!.index,
                     );
+                    setState(() {});
                   },
                   child: Text("Guardar Cambios"),
                 ),
