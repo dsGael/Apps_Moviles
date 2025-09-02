@@ -24,14 +24,14 @@ class MyApp extends StatelessWidget {
           builder: (context, state) =>
               const MyHomePage(title: 'Juego del Ahorcado'),
         ),
-        GoRoute(path: '/juego', builder: (context, state) => const JuegoPage()),
+        GoRoute(path: '/juego', builder: (context, state) => JuegoPage()),
         GoRoute(
           path: '/configuracion',
           builder: (context, state) => ConfiguracionPage(),
         ),
         GoRoute(
           path: '/informacion',
-          builder: (context, state) => const InformacionPage(),
+          builder: (context, state) => InformacionPage(),
         ),
       ],
     );
