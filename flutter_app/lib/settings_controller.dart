@@ -8,19 +8,19 @@ class SettingsController extends GetxController {
 
   Map<String, String> temaBase = {
     'nombre': 'Base',
-    'background': './../assets/base/background.png',
+    'background': 'assets/base/background.png',
     'top': '6',
-    'left': '230',
+    'left': '110',
   };
   Map<String, String> temaFuturista = {
     'nombre': 'Futurista',
-    'background': './../assets/futurista/background.png',
+    'background': 'assets/futurista/background.png',
     'top': '6',
-    'left': '230',
+    'left': '110',
   };
   // Map<String, String> temaTerror = {
   //   'nombre': 'Terror',
-  //   'background': './../assets/terror/background.png',
+  //   'background': 'assets/terror/background.png',
   //   'top': '6',
   //   'left': '230',
   // };
@@ -55,9 +55,9 @@ class SettingsController extends GetxController {
   Image showAhorcado(int indice, double h) {
     Map<String, String> temaActual = temas[tema];
     String nombreTema = temaActual['nombre']!; // ! check null
-    String imagenAhorcado = '${nombreTema.toLowerCase()}/$indice.png';
+    String imagenAhorcado = 'assets/${nombreTema.toLowerCase()}/$indice.png';
     //return imagenAhorcado;
-    return Image.asset(imagenAhorcado, height: h);
+    return Image.asset(imagenAhorcado, height: h, fit: BoxFit.fitWidth);
   }
 
   String getTemaNombre(int indice) {

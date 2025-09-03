@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'settings_controller.dart';
 
 List<String> imagenes = [
-  './../assets/base/background.png',
-  './../assets/futurista/background.png',
+  'assets/base/background.png',
+  'assets/futurista/background.png',
 ];
 
 class ConfiguracionPage extends StatefulWidget {

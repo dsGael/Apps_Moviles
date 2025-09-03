@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'settings_controller.dart';
 
@@ -11,6 +14,46 @@ class JuegoPage extends StatefulWidget {
 }
 
 class _JuegoPageState extends State<JuegoPage> {
+  String archivoPalabras = "assets/palabras/palabras.txt";
+  List<String> palabras = [];
+  String _palabra = "";
+  String _espacios = "";
+  int idxpalabra = 0;
+  int _intentos = 0;
+  final _random = Random();
+
+  @override
+  void initState() {
+    super.initState();
+    _cargaPalabras();
+  }
+
+  Future<void> _cargaPalabras() async {
+    final String contenido = await rootBundle.loadString(archivoPalabras);
+    setState(() {
+      palabras = contenido.split('\n');
+    });
+  }
+
+  void _setEspacio() {
+    setState(() {
+      if (palabras.isNotEmpty) {
+        _palabra = palabras[idxpalabra];
+        _espacios = "_" * _palabra.length;
+      } else {
+        _palabra = "";
+        _espacios = "";
+      }
+    });
+  }
+
+  void _nuevoJuego() {
+    setState(() {});
+    idxpalabra = _random.nextInt(palabras.length);
+    _intentos = 0;
+    _setEspacio();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,11 +75,14 @@ class _JuegoPageState extends State<JuegoPage> {
                     children: <Widget>[
                       widget.settingsController.showTemaSelectedBackground(300),
                       Positioned(
-                        top: widget.settingsController.getTemaTop(6),
-                        left: widget.settingsController.getTemaLeft(6),
+                        top: widget.settingsController.getTemaTop(_intentos),
+                        left: widget.settingsController.getTemaLeft(_intentos),
                         child: Container(
-                          width: 150,
-                          child: widget.settingsController.showAhorcado(6, 350),
+                          width: 160,
+                          child: widget.settingsController.showAhorcado(
+                            _intentos,
+                            350,
+                          ),
                         ),
                       ),
                     ],
@@ -46,7 +92,16 @@ class _JuegoPageState extends State<JuegoPage> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text("_ _ _ _ _ _ _ _ _ _")],
+              children: [Text(_espacios), Text(_palabra)],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _nuevoJuego,
+                  child: const Text("Nuevo Juego"),
+                ),
+              ],
             ),
           ],
         ),
