@@ -1,10 +1,10 @@
 {
-    "files.autoSave": "off",
-    "dart.flutterHotReloadOnSave": "all",
-    "dart.hotReloadOnSave": "all",
-    "editor.formatOnSave": true,
-    "files.exclude": {
-        "**/.git": true,
-        "**/.DS_Store": true
-    }
+  "files.autoSave": "off",
+  "dart.flutterHotReloadOnSave": "all",
+  "dart.hotReloadOnSave": "all",
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true
+  }
 }
