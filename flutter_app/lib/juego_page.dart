@@ -52,11 +52,25 @@ class _JuegoPageState extends State<JuegoPage> {
 
   void _enviar() {
     String input = _controller.text.toLowerCase();
-    if (input.isEmpty) return;
+    setState(() {
+      if (input.isEmpty) return;
 
-    if (input.length == 1) {
-      String letra = input.toLowerCase();
-    } else {}
+      if (input.length == 1) {
+        if (abc.contains(input)) {
+          abc = abc.replaceAll(input, '*');
+          if (_palabra.contains(input)) {
+            String newEspacios = '';
+            for (int i = 0; i < _palabra.length; i++) {
+              if (_palabra[i] == input) {
+                newEspacios += input + ' ';
+              } else {
+                newEspacios += _espacios[i * 2] + ' ';
+              }
+            }
+          }
+        }
+      } else {}
+    });
   }
 
   void _nuevoJuego() {
