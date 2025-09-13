@@ -42,12 +42,45 @@ class _JuegoPageState extends State<JuegoPage> {
     setState(() {
       if (palabras.isNotEmpty) {
         _palabra = palabras[idxpalabra];
-        _espacios = "_" * _palabra.length;
+        _espacios = List.filled(_palabra.length, "_").join(" ");
       } else {
         _palabra = "";
         _espacios = "";
       }
     });
+  }
+
+  void _showDialog(String title, String content) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(content),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                child: const Text('Play again'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _nuevoJuego();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _enviar() {
@@ -56,10 +89,11 @@ class _JuegoPageState extends State<JuegoPage> {
       if (input.isEmpty) return;
 
       if (input.length == 1) {
+        // input es una letra
         if (abc.contains(input)) {
           abc = abc.replaceAll(input, '*');
           if (_palabra.contains(input)) {
-            String newEspacios = '';
+            String newEspacios = "";
             for (int i = 0; i < _palabra.length; i++) {
               if (_palabra[i] == input) {
                 newEspacios += input + ' ';
@@ -67,9 +101,37 @@ class _JuegoPageState extends State<JuegoPage> {
                 newEspacios += _espacios[i * 2] + ' ';
               }
             }
+            _espacios = newEspacios; // va fuera del ciclo
+          } else {
+            _intentos++;
+            if (_intentos >= 6) {
+              _showDialog("Perdiste", "La palabra era: $_palabra");
+            }
           }
         }
-      } else {}
+      } else {
+        // input es una palabra
+        if (input == _palabra) {
+          for (int i = 0; i < _palabra.length; i++) {
+            _espacios = '$_palabra[i] ';
+          }
+          if (!_espacios.contains('_')) {
+            _showDialog(
+              "Ganaste",
+              "Felicidades, adivinaste la palabra: $_palabra",
+            );
+          }
+        } else {
+          _intentos++;
+          if (_intentos >= 6) {
+            _showDialog("Perdiste", "La palabra era: $_palabra");
+          }
+        }
+      }
+      _controller.clear();
+      if (!_espacios.contains('_')) {
+        _showDialog("Ganaste", "Felicidades, adivinaste la palabra: $_palabra");
+      }
     });
   }
 
