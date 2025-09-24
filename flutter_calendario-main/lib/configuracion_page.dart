@@ -17,7 +17,7 @@ class ConfiguracionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    _loadPersistentData();
+    _loadPersistedData();
     return AppScaffold(
       title: 'Configuración',
       body: Padding(
@@ -25,19 +25,21 @@ class ConfiguracionPage extends StatelessWidget {
         child: ListView(
           children: [
             AppText(
-              'Personaliza tu app',
+              text: 'Personaliza tu aplicación',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             TextField(
               controller: textController,
               decoration: InputDecoration(
-                labelText: 'Nombre de la Veterinaria',
+                labelText: 'Nombre de veterinaria',
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
                 _saveCustomText(value);
               },
             ),
+
+            const SizedBox(height: 20),
             RadioGroup<ThemeMode>(
               groupValue: themeProvider.themeMode,
               onChanged: (mode) => themeProvider.setTheme(mode!),
@@ -66,12 +68,12 @@ class ConfiguracionPage extends StatelessWidget {
 
   void _saveCustomText(String text) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('customText', text);
+    await prefs.setString('custom_text', text);
   }
 
-  void _loadPersistentData() async {
+  void _loadPersistedData() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedText = prefs.getString('customText') ?? '';
+    final savedText = prefs.getString('custom_text') ?? '';
     textController.text = savedText;
   }
 }

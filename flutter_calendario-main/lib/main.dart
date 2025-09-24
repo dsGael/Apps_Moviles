@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'settings_controller.dart';
 import 'app_scaffold.dart';
 import 'agenda_page.dart';
 import 'configuracion_page.dart';
 
-
-
-void main() {  
+void main() {
   Get.put(SettingsController());
   runApp(const MyApp());
 }
@@ -18,14 +17,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GoRouter router = GoRouter(routes:  [
-      GoRoute(path: '/', builder: (context, state) => const MyHomePage(title:'Inicio')),
-      GoRoute(path: '/agenda', builder: (context, state) => AgendaPage()),
-      GoRoute(path: '/configuracion', builder: (context, state) => ConfiguracionPage()),
-    ]);
-    return MaterialApp.router(
-      routerConfig: router,
-      );
+    final GoRouter router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const MyHomePage(title: 'Inicio'),
+        ),
+        GoRoute(path: '/agenda', builder: (context, state) => AgendaPage()),
+        GoRoute(
+          path: '/configuracion',
+          builder: (context, state) => ConfiguracionPage(),
+        ),
+      ],
+    );
+    return MaterialApp.router(routerConfig: router);
   }
 }
 
@@ -39,13 +44,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String nombreVeterinaria = '';
   @override
-  Widget build(BuildContext context) {
-    return AppScaffold(
-      title: widget.title,
-      body: Center(
-        child: Text('Agenda'),
-      ),
-    );
+  void initState() {
+    super.initState();
+    _loadCustomText();
+  }
+
+  Future<void> _loadCustomText() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nombreVeterinaria = prefs.getString('custom_text') ?? 'Mi Veterinaria';
+    });
   }
 }
