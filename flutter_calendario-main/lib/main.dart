@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendario/app_logo.dart';
 import 'package:flutter_calendario/theme_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get/get.dart';
@@ -10,9 +11,9 @@ import 'configuracion_page.dart';
 import 'theme_provider.dart';
 import 'app_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'logo_manager.dart';
 
-
-void main() {  
+void main() {
   Get.put(SettingsController());
   runApp(
     ChangeNotifierProvider(
@@ -21,22 +22,36 @@ void main() {
     ),
   );
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final GoRouter router = GoRouter(routes:  [
-      GoRoute(path: '/', builder: (context, state) => const MyHomePage(title:'Inicio')),
-      GoRoute(path: '/agenda', builder: (context, state) => AgendaPage()),
-      GoRoute(path: '/configuracion', builder: (context, state) => ConfiguracionPage()),
-    ]);
-    return MaterialApp.router( title: 'Agenda Veterinaria',
+    final GoRouter router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (context, state) => const MyHomePage(title: 'Inicio'),
+        ),
+        GoRoute(path: '/agenda', builder: (context, state) => AgendaPage()),
+        GoRoute(
+          path: '/configuracion',
+          builder: (context, state) => ConfiguracionPage(),
+        ),
+        GoRoute(
+          path: '/logomanager',
+          builder: (context, state) => LogoManager(),
+        ),
+      ],
+    );
+    return MaterialApp.router(
+      title: 'Agenda Veterinaria',
       routerConfig: router,
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      themeMode: themeProvider.themeMode, 
-      );
+      themeMode: themeProvider.themeMode,
+    );
   }
 }
 
@@ -56,12 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _loadCustomText();
   }
+
   Future<void> _loadCustomText() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      nombreVeterinaria = prefs.getString('custom_text') ?? 'Mi Veterinaria';
+      nombreVeterinaria = prefs.getString('custom_text') ?? 'George Droid';
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -69,6 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Container(
+            child: Center(child: AppLogo(width: 300, height: 300)),
+            margin: EdgeInsets.all(20.0),
+          ),
           Center(
             child: Text(
               nombreVeterinaria,
