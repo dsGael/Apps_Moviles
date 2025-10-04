@@ -11,7 +11,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-flutter_calendario-main/client_secret_325185530319-m4dep3iq3ssg0p1orth2k5l8tc6rf8ku.apps.googleusercontent.com.json
+client_secret_325185530319-m4dep3iq3ssg0p1orth2k5l8tc6rf8ku.apps.googleusercontent.com.json
 # IntelliJ related
 *.iml
 *.ipr
