@@ -12,6 +12,8 @@ import 'theme_provider.dart';
 import 'app_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'logo_manager.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 void main() {
   Get.put(SettingsController());

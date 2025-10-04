@@ -13,6 +13,7 @@ class ConfiguracionPage extends StatelessWidget {
 
   final SettingsController settingsController = Get.put(SettingsController());
   final TextEditingController textController = TextEditingController();
+  final TextEditingController calendarIdController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,17 @@ class ConfiguracionPage extends StatelessWidget {
                 _saveCustomText(value);
               },
             ),
-
+            const SizedBox(height: 20),
+            TextField(
+              controller: calendarIdController,
+              decoration: InputDecoration(
+                labelText: 'ID de calendario (Google Calendar)',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                _saveCalendarID(value);
+              },
+            ),
             const SizedBox(height: 20),
             RadioGroup<ThemeMode>(
               groupValue: themeProvider.themeMode,
@@ -71,9 +82,19 @@ class ConfiguracionPage extends StatelessWidget {
     await prefs.setString('custom_text', text);
   }
 
+  void _saveCalendarID(String text) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('calendar_id', text);
+  }
+
   void _loadPersistedData() async {
     final prefs = await SharedPreferences.getInstance();
     final savedText = prefs.getString('custom_text') ?? '';
     textController.text = savedText;
+    final savedCalendarId = prefs.getString('calendar_id') ?? '';
+    calendarIdController.text = savedCalendarId;
+    if (calendarIdController.text.isEmpty) {
+      calendarIdController.text = savedCalendarId;
+    }
   }
 }
