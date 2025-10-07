@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_calendario/app_logo.dart';
+import 'package:flutter_calendario/services/transparent_google_auth.dart';
 import 'package:flutter_calendario/theme_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get/get.dart';
@@ -8,15 +8,29 @@ import 'settings_controller.dart';
 import 'app_scaffold.dart';
 import 'agenda_page.dart';
 import 'configuracion_page.dart';
-import 'theme_provider.dart';
-import 'app_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'logo_manager.dart';
+import 'app_logo.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   Get.put(SettingsController());
+  await dotenv.load(fileName: ".env");
+
+  try {
+    print('Iniciando aplicación...');
+    final authResult =
+        await TransparentGoogleAuthService.initializeTransparentAuth();
+    if (authResult) {
+      print('Autenticación exitosa!');
+    } else {
+      print('Autenticación no disponible... funcionalidad limitada :/');
+    }
+  } catch (error) {
+    print('Error en autenticación (la app continuará): $error');
+  }
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => ThemeProvider(),
@@ -77,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _loadCustomText() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      nombreVeterinaria = prefs.getString('custom_text') ?? 'George Droid';
+      nombreVeterinaria = prefs.getString('custom_text') ?? 'Mi Veterinaria';
     });
   }
 
@@ -88,10 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
-            child: Center(child: AppLogo(width: 300, height: 300)),
-            margin: EdgeInsets.all(20.0),
+          AppLogo(
+            width: 120,
+            height: 120,
+            borderRadius: BorderRadius.circular(12),
           ),
+          SizedBox(height: 16),
           Center(
             child: Text(
               nombreVeterinaria,

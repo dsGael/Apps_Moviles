@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'app_text.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_logo.dart';
+import 'widgets/auth_status_widget.dart';
 
 class AppScaffold extends StatelessWidget {
   final String title;
   final Widget body;
 
   const AppScaffold({super.key, required this.title, required this.body});
+
   static Future<String?> _getCustomText() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('custom_text') ?? 'Menú';
@@ -38,6 +39,8 @@ class AppScaffold extends StatelessWidget {
                         drawerText,
                         style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
+                      SizedBox(height: 8),
+                      AuthStatusWidget(),
                     ],
                   );
                 },
