@@ -34,23 +34,26 @@ class _GoogleCalendarApiWidgetState extends State<GoogleCalendarApiWidget> {
   }
 
   Future<void> _initializeCalendar() async {
-    print('Iniciando _initializeCalendar');
-
     await _loadCalendarUrl();
-    print('Calendar ID cargado: $_calendarId');
 
-    // Verificar plataforma
+    // Verificar si estamos en una plataforma no soportada
     if (!kIsWeb && Platform.isMacOS) {
-      print('Plataforma macOS detectada - deteniendo');
+      setState(() {
+        _isLoading = false;
+        _errorMessage =
+            'La funcionalidad de calendario no está disponible en esta plataforma. Usa la versión web para acceso completo.';
+      });
       return;
     }
 
     // Solo cargar eventos si hay un calendar ID configurado
     if (_calendarId.isNotEmpty) {
-      print('Cargando eventos del calendario...');
       await _loadCalendarEvents();
     } else {
-      print('Calendar ID vacío - no se cargan eventos');
+      setState(() {
+        _isLoading = false;
+        _errorMessage = null;
+      });
     }
   }
 
@@ -466,8 +469,8 @@ class CalendarEvent {
         startTime = DateTime.parse(start['date']);
         isAllDay = true;
       } else if (start['dateTime'] != null) {
-        // Evento con hora específica
-        startTime = DateTime.parse(start['dateTime']);
+        // Evento con hora específica - convertir de UTC a hora local
+        startTime = DateTime.parse(start['dateTime']).toLocal();
       }
     }
 
@@ -475,7 +478,8 @@ class CalendarEvent {
       if (end['date'] != null) {
         endTime = DateTime.parse(end['date']);
       } else if (end['dateTime'] != null) {
-        endTime = DateTime.parse(end['dateTime']);
+        // Convertir la hora final de UTC a local también
+        endTime = DateTime.parse(end['dateTime']).toLocal();
       }
     }
 
