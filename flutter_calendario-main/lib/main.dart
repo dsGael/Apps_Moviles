@@ -13,6 +13,7 @@ import 'logo_manager.dart';
 import 'app_logo.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(SettingsController());
