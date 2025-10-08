@@ -84,14 +84,14 @@ class ConfiguracionPage extends StatelessWidget {
 
   void _saveCalendarID(String text) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('calendar_id', text);
+    await prefs.setString('calendar_url', text);
   }
 
   void _loadPersistedData() async {
     final prefs = await SharedPreferences.getInstance();
     final savedText = prefs.getString('custom_text') ?? '';
     textController.text = savedText;
-    final savedCalendarId = prefs.getString('calendar_id') ?? '';
+    final savedCalendarId = prefs.getString('calendar_url') ?? '';
     calendarIdController.text = savedCalendarId;
     if (calendarIdController.text.isEmpty) {
       calendarIdController.text = savedCalendarId;

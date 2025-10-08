@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendario/services/transparent_google_auth.dart';
 import 'package:flutter_calendario/theme_provider.dart';
+import 'package:flutter_calendario/widgets/calendar_main_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -115,6 +116,8 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
+          Divider(color:Colors.grey.shade300),
+          Expanded(child: MiCalendarioConAPI(),)
         ],
       ),
     );
