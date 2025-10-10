@@ -74,6 +74,13 @@ class AppScaffold extends StatelessWidget {
                 context.go('/logomanager');
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('Semanal'),
+              onTap: () {
+                context.go('/semanal');
+              },
+            ),
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calendario/services/transparent_google_auth.dart';
 import 'package:flutter_calendario/theme_provider.dart';
 import 'package:flutter_calendario/widgets/calendar_main_widget.dart';
+import 'package:flutter_calendario/widgets/calendar_week_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'logo_manager.dart';
 import 'app_logo.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,7 +52,10 @@ class MyApp extends StatelessWidget {
           path: '/',
           builder: (context, state) => const MyHomePage(title: 'Inicio'),
         ),
-        GoRoute(path: '/agenda', builder: (context, state) => AgendaPage()),
+        GoRoute(
+          path: '/agenda',
+          builder: (context, state) => AgendaPage()
+        ),
         GoRoute(
           path: '/configuracion',
           builder: (context, state) => ConfiguracionPage(),
@@ -60,6 +63,10 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/logomanager',
           builder: (context, state) => LogoManager(),
+        ),
+        GoRoute(
+          path: '/semanal',
+          builder: (context, state) => const CalendarWeekWidget(),
         ),
       ],
     );
@@ -116,8 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
-          Divider(color:Colors.grey.shade300),
-          Expanded(child: MiCalendarioConAPI(),)
+          Divider(color: Colors.grey.shade300),
+          Expanded(child: MiCalendarioConAPI()),
         ],
       ),
     );

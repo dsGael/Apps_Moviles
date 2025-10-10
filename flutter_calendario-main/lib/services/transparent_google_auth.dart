@@ -8,10 +8,10 @@ class TransparentGoogleAuthService {
   static GoogleSignIn? _googleSignIn;
   static GoogleSignInAccount? _currentUser;
   static Map<String, String>? _authHeaders;
-  
+
   // Scopes necesarios para Google Calendar
   static const List<String> _scopes = [
-    'https://www.googleapis.com/auth/calendar.readonly',
+    'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
   ];
@@ -19,7 +19,7 @@ class TransparentGoogleAuthService {
   static GoogleSignIn get _instance {
     if (_googleSignIn == null) {
       final clientId = dotenv.env['GOOGLE_CLIENT_ID'];
-      
+
       if (kIsWeb) {
         _googleSignIn = GoogleSignIn(
           clientId: clientId,
@@ -49,7 +49,7 @@ class TransparentGoogleAuthService {
   // Verificar si la plataforma soporta Google Sign-In
   static bool get _isPlatformSupported {
     if (kIsWeb) return true;
-    
+
     // En Flutter, verificamos si estamos en una plataforma móvil soportada
     // Nota: macOS puede tener problemas con Google Sign-In
     try {
@@ -68,16 +68,18 @@ class TransparentGoogleAuthService {
   static Future<bool> initializeTransparentAuth() async {
     try {
       print('🔐 Iniciando autenticación transparente...');
-      
+
       // Verificar si la plataforma está soportada
       if (!_isPlatformSupported) {
         print('⚠️ Plataforma no soportada para Google Sign-In');
         return false;
       }
-      
+
+      await _instance.signOut(); // Asegurarse de empezar limpio
+
       // Intentar login silencioso primero
       final user = await _instance.signInSilently();
-      
+
       if (user != null) {
         print('✅ Login silencioso exitoso: ${user.email}');
         _currentUser = user;
@@ -88,7 +90,7 @@ class TransparentGoogleAuthService {
       // Si no hay login silencioso, intentar login interactivo UNA VEZ
       print('⚠️ Login silencioso falló, intentando login interactivo...');
       final interactiveUser = await _instance.signIn();
-      
+
       if (interactiveUser != null) {
         print('✅ Login interactivo exitoso: ${interactiveUser.email}');
         _currentUser = interactiveUser;
@@ -98,7 +100,6 @@ class TransparentGoogleAuthService {
 
       print('❌ No se pudo autenticar');
       return false;
-      
     } catch (error) {
       print('❌ Error en autenticación transparente: $error');
       // En caso de error, no crashear la app
@@ -109,7 +110,7 @@ class TransparentGoogleAuthService {
   // Configurar headers de autenticación para requests HTTP
   static Future<void> _setupAuthHeaders() async {
     if (_currentUser == null) return;
-    
+
     try {
       final auth = await _currentUser!.authentication;
       _authHeaders = {
@@ -132,10 +133,10 @@ class TransparentGoogleAuthService {
     try {
       print('🔍 Obteniendo autenticación para calendario...');
       final auth = await _currentUser!.authentication;
-      
+
       print('🔍 Access token disponible: ${auth.accessToken != null}');
       print('🔍 ID token disponible: ${auth.idToken != null}');
-      
+
       if (auth.accessToken == null) {
         print('❌ No hay access token disponible');
         return null;
@@ -144,17 +145,18 @@ class TransparentGoogleAuthService {
       // Probemos primero con la URL directa del calendario sin token
       // Google Calendar embebido NO necesita access token en la URL
       const baseUrl = 'https://calendar.google.com/calendar/embed';
-      const calendarId = '02fe70469480b93b808fbbbbc7fbcb453059735d42171b343626393437d2314b%40group.calendar.google.com';
-      
+      const calendarId =
+          '02fe70469480b93b808fbbbbc7fbcb453059735d42171b343626393437d2314b%40group.calendar.google.com';
+
       // URL sin token de acceso (Google Calendar embebido usa cookies del navegador)
-      final calendarUrl = '$baseUrl?src=$calendarId&ctz=America%2FHermosillo'
+      final calendarUrl =
+          '$baseUrl?src=$calendarId&ctz=America%2FHermosillo'
           '&showTitle=0&showNav=1&showDate=1&showCalendars=1&showTz=0'
           '&mode=WEEK&height=600&wkst=1&bgcolor=%23ffffff';
 
       print('✅ URL del calendario generada (sin token en URL)');
       print('🔗 URL: $calendarUrl');
       return calendarUrl;
-      
     } catch (error) {
       print('❌ Error generando URL del calendario: $error');
       return null;
@@ -197,7 +199,7 @@ class TransparentGoogleAuthService {
   // Cliente HTTP autenticado para requests adicionales
   static http.Client? getAuthenticatedHttpClient() {
     if (_authHeaders == null) return null;
-    
+
     return http.Client();
   }
 }
