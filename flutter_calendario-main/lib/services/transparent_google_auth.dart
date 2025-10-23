@@ -28,6 +28,10 @@ class TransparentGoogleAuthService {
           signInOption: SignInOption.standard,
         );
       } else {
+          if (clientId == null || clientId.isEmpty) {
+         print('❌ GOOGLE_CLIENT_ID no está configurado en .env');
+        }
+
         _googleSignIn = GoogleSignIn(
           scopes: _scopes,
           signInOption: SignInOption.standard,
