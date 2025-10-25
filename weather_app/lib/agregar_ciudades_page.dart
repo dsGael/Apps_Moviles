@@ -8,9 +8,27 @@ import 'package:latlong2/latlong.dart';
 import 'settings_controller.dart';
 import 'app_scaffold.dart';
 
-class AgregarCiudadesPage extends StatelessWidget {
+
+class AgregarCiudadesPage extends StatefulWidget {
   AgregarCiudadesPage({super.key});
+
+  @override
+  State<AgregarCiudadesPage> createState() => _AgregarCiudadesPageState();
+}
+
+class _AgregarCiudadesPageState extends State<AgregarCiudadesPage> {
+
   final TextEditingController _cityController = TextEditingController();
+  final MapController _mapController = MapController();
+  List ciudadData = [];
+
+  double dLat=29.0948207;
+  double dLon=-110.9692202;
+
+  double selectedLat=29.0948207;
+  double selectedLon=-110.9692202;
+
+  int? selectedIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -41,22 +59,52 @@ class AgregarCiudadesPage extends StatelessWidget {
                 onPressed: () async {
                   final ciudad = _cityController.text;
                   if (ciudad.isNotEmpty) {
-                    // Lógica para buscar y agregar la ciudad
-                    final ciudadData = await _buscarCiudad(ciudad);
-                    // Impriimir datos de la ciudad en consola
-                    debugPrint('Ciudad agregada: ${ciudadData['nombre']}');
-                    debugPrint(
-                      'Coordenadas: ${ciudadData['latitud']}, ${ciudadData['longitud']}',
-                    );
+                    final resultados=await _buscarCiudad(ciudad);
+                   
+                    if(!mounted) return;
+                    setState((){
+                      ciudadData = resultados;
+                      });
+                    debugPrint(ciudadData.toString());
+                   
                   }
                 },
               ),
+              SizedBox(height: 20),
+              Container(
+                height: 200,
+                child: ListView.builder(
+                  itemCount: ciudadData.length,
+                  itemBuilder: (context, index) {
+                    final ciudadInfo = ciudadData[index];
+                    return ListTile(
+                      title: Text(ciudadInfo['display_name']),
+                      subtitle: Text('Lat: ${ciudadInfo['lat']}, Lon: ${ciudadInfo['lon']}',),
+                      selected: selectedIndex == index,
+                      onTap:(){
+                        setState(() {
+                          selectedIndex = index;
+                          _cityController.text = ciudadInfo['display_name'];
+                          selectedLat = double.parse(ciudadInfo['lat']);
+                          selectedLon = double.parse(ciudadInfo['lon']);
+                          _mapController.move(LatLng(selectedLat, selectedLon),10 );
+                        });
+                      }
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
               Container(
                 height: 300,
+                // Agregar mapa con flutter_map con control de zoom.
                 child: FlutterMap(
+                  mapController: _mapController,
                   options: MapOptions(
-                    initialCenter: LatLng(29.0948207, -110.9692202),
-                    initialZoom: 2,
+                    initialCenter: LatLng(selectedLat, selectedLon),
+                    initialZoom: 8,
+                    maxZoom: 18,
+                    minZoom: 3,
                   ),
                   children: [
                     TileLayer(
@@ -76,7 +124,7 @@ class AgregarCiudadesPage extends StatelessWidget {
     );
   }
 
-  Future<Map<String, dynamic>> _buscarCiudad(String nombreCiudad) async {
+  Future<List> _buscarCiudad(String nombreCiudad) async {
     // Aquí iría la lógica para buscar la ciudad en una base de datos o API
     // Por ahora, devolvemos un mapa simulado
     // Necesitamos armar el url para  consultar Nominatim con el nombreCiudad
@@ -88,20 +136,22 @@ class AgregarCiudadesPage extends StatelessWidget {
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
       if (data.isNotEmpty) {
-        final ciudadInfo = data[0];
-        return {
+        //final ciudadInfo = data[0];
+        return data;
+        /*{
           'nombre': ciudadInfo['display_name'],
           'pais': ciudadInfo['address']['country'],
           'latitud': double.parse(ciudadInfo['lat']),
           'longitud': double.parse(ciudadInfo['lon']),
-        };
+        };*/
       }
     }
-    return {
+    return [];
+    /*{
       'nombre': nombreCiudad,
       'pais': 'País Ejemplo',
       'latitud': 0.0,
       'longitud': 0.0,
-    };
+    };*/
   }
 }
