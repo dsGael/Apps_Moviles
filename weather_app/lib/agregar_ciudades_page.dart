@@ -8,36 +8,37 @@ import 'package:latlong2/latlong.dart';
 import 'settings_controller.dart';
 import 'app_scaffold.dart';
 
-
 class AgregarCiudadesPage extends StatefulWidget {
-  AgregarCiudadesPage({super.key});
-
+  const AgregarCiudadesPage({super.key});
   @override
   State<AgregarCiudadesPage> createState() => _AgregarCiudadesPageState();
 }
 
 class _AgregarCiudadesPageState extends State<AgregarCiudadesPage> {
-
   final TextEditingController _cityController = TextEditingController();
   final MapController _mapController = MapController();
   List ciudadData = [];
-
-  double dLat=29.0948207;
-  double dLon=-110.9692202;
-
-  double selectedLat=29.0948207;
-  double selectedLon=-110.9692202;
-
+  double dLat = 29.0948207;
+  double dLon = -110.9692202;
+  double selectedLat = 29.0948207;
+  double selectedLon = -110.9692202;
   int? selectedIndex;
+  Future<List<Map<String, dynamic>>> ciudadesGuardadas =
+      Future<List<Map<String, dynamic>>>.value([]);
+  void initState() {
+    super.initState();
+    ciudadesGuardadas = _ciudadesGuardadas();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
       title: "Agregar Ciudades",
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Column(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Aquí puedes agregar nuevas ciudades",
@@ -59,19 +60,17 @@ class _AgregarCiudadesPageState extends State<AgregarCiudadesPage> {
                 onPressed: () async {
                   final ciudad = _cityController.text;
                   if (ciudad.isNotEmpty) {
-                    final resultados=await _buscarCiudad(ciudad);
-                   
-                    if(!mounted) return;
-                    setState((){
+                    final resultados = await _buscarCiudad(ciudad);
+                    if (!mounted) return;
+                    setState(() {
                       ciudadData = resultados;
-                      });
+                    });
                     debugPrint(ciudadData.toString());
-                   
                   }
                 },
               ),
               SizedBox(height: 20),
-              Container(
+              SizedBox(
                 height: 200,
                 child: ListView.builder(
                   itemCount: ciudadData.length,
@@ -79,30 +78,84 @@ class _AgregarCiudadesPageState extends State<AgregarCiudadesPage> {
                     final ciudadInfo = ciudadData[index];
                     return ListTile(
                       title: Text(ciudadInfo['display_name']),
-                      subtitle: Text('Lat: ${ciudadInfo['lat']}, Lon: ${ciudadInfo['lon']}',),
+                      subtitle: Text(
+                        'Lat: ${ciudadInfo['lat']}, Lon: ${ciudadInfo['lon']}',
+                      ),
                       selected: selectedIndex == index,
-                      onTap:(){
+                      onTap: () {
                         setState(() {
                           selectedIndex = index;
                           _cityController.text = ciudadInfo['display_name'];
                           selectedLat = double.parse(ciudadInfo['lat']);
                           selectedLon = double.parse(ciudadInfo['lon']);
-                          _mapController.move(LatLng(selectedLat, selectedLon),10 );
+                          _mapController.move(
+                            LatLng(selectedLat, selectedLon),
+                            10,
+                          );
                         });
-                      }
+                      },
                     );
                   },
                 ),
               ),
               SizedBox(height: 20),
-              Container(
+              //aqui va la lista
+              SizedBox(
+                height: 200,
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: ciudadesGuardadas,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Text('Error ${snapshot.error}');
+                    }
+                    final data =
+                        snapshot.data ?? const <Map<String, dynamic>>[];
+                    if (data.isEmpty) {
+                      return const Center(
+                        child: Text('No hay ciudades guardadas.'),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        final ciudad = data[index];
+                        return ListTile(
+                          title: Text(ciudad['nombre'].toString()),
+                          subtitle: Text(
+                            'Lat: ${ciudad["latitud"]} Lon: ${ciudad["longitud"]}',
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
+              //aqui va el boton de agegar ciudades
+              SizedBox(
+                child: ElevatedButton(
+                  child: const Text("Agregar ciudad"),
+                  onPressed: () {
+                    _agregarCiudad(
+                      _cityController.text,
+                      selectedLat,
+                      selectedLon,
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
+              SizedBox(
                 height: 300,
                 // Agregar mapa con flutter_map con control de zoom.
                 child: FlutterMap(
                   mapController: _mapController,
                   options: MapOptions(
                     initialCenter: LatLng(selectedLat, selectedLon),
-                    initialZoom: 8,
+                    initialZoom: 10,
                     maxZoom: 18,
                     minZoom: 3,
                   ),
@@ -118,8 +171,8 @@ class _AgregarCiudadesPageState extends State<AgregarCiudadesPage> {
               ),
             ],
           ),
-          Divider(color: Colors.grey.shade300),
-        ],
+          //Divider(color: Colors.grey.shade300),
+        ),
       ),
     );
   }
@@ -153,5 +206,33 @@ class _AgregarCiudadesPageState extends State<AgregarCiudadesPage> {
       'latitud': 0.0,
       'longitud': 0.0,
     };*/
+  }
+
+  void _agregarCiudad(String nombre, double lat, double lon) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> listaCiudadesGuardadas = prefs.getStringList('ciudades') ?? [];
+    String ciudadString = json.encode({
+      'nombre': nombre,
+      'latitud': lat,
+      'longitud': lon,
+    });
+    listaCiudadesGuardadas.add(ciudadString);
+    await prefs.setStringList('ciudades', listaCiudadesGuardadas);
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Ciudad agregada: $nombre')));
+    // Forzamos la reconstrucción
+    setState(() {
+      ciudadesGuardadas = _ciudadesGuardadas();
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> _ciudadesGuardadas() async {
+    final prefs = await SharedPreferences.getInstance();
+    final ciudadesString = prefs.getStringList('ciudades') ?? [];
+    return ciudadesString
+        .map((ciudadStr) => json.decode(ciudadStr) as Map<String, dynamic>)
+        .toList();
   }
 }
