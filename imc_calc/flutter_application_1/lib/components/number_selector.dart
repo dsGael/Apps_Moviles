@@ -37,13 +37,17 @@ class _NumberSelectorState extends State<NumberSelector> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                FloatingActionButton(onPressed: (){
+                FloatingActionButton(
+                  heroTag: null,
+                  onPressed: (){
                   widget.onDecrement();
                 }, shape: CircleBorder(), backgroundColor: AppColors.primary, child: Icon(Icons.remove),),
                 SizedBox(width: 12,),
                 Text(widget.value.toString(), style: TextStyles.bigNumberText),
                 SizedBox(width: 16,),
-                FloatingActionButton(onPressed: (){
+                FloatingActionButton(
+                  heroTag: null,
+                  onPressed: (){
                   widget.onIncrement();
                 }, shape: CircleBorder(), backgroundColor: AppColors.primary, child: Icon(Icons.add),)
                 

@@ -5,4 +5,6 @@ class TextStyles {
   static const TextStyle bodyText = TextStyle(color:Colors.black, fontSize: 18);
   static const TextStyle bigText= TextStyle(fontWeight: FontWeight.bold, fontSize: 27 , color: AppColors.accent  );
   static const TextStyle bigNumberText= TextStyle(color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold );
+  static const TextStyle buttonText = TextStyle(color:Colors.white, fontSize: 20, fontWeight: FontWeight.bold);
+  static const TextStyle resultNumberText= TextStyle(color: Colors.black, fontSize: 45, fontWeight: FontWeight.bold );
 }
